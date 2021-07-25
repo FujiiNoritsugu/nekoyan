@@ -1,0 +1,54 @@
+service: ask-serverless
+
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+frameworkVersion: '2'
+
+plugins:
+  - serverless-webpack
+  - serverless-alexa-skills
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+
+custom:
+  alexa:
+    # Step 1: Run `sls alexa auth` to authenticate
+    # Step 2: Run `sls alexa create --name "Serverless Alexa Typescript" --locale en-GB --type custom` to create a new skill
+    skills:
+      # Step 3: Paste the skill id returned by the create command here:
+      - id: amzn1.ask.skill.f0a14358-44c2-4bd7-bf5c-352773adb12b
+        manifest:
+          publishingInformation:
+            locales:
+              ja-JP:
+                name: はじめてのねこやん
+          apis:
+            custom:
+              endpoint:
+                # Step 4: Do your first deploy of your Serverless stack
+                # Step 5: Paste the ARN of your lambda here:
+                uri: arn:aws:lambda:us-east-1:900786439753:function:ask-serverless-dev-alexa
+                # Step 6: Run `sls alexa update` to deploy the skill manifest
+                # Step 7: Run `sls alexa build` to build the skill interaction model
+                # Step 8: Enable the skill in the Alexa app to start testing.
+          manifestVersion: '1.0'
+        models:
+          ja-JP:
+            interactionModel:
+              languageModel:
+                invocationName: きょうのねこやん
+                intents:
+                  - name: HelloIntent
+                    samples:
+                      - 'ねこやん'
+                  - name: AMAZON.StopIntent
+functions:
+  alexa:
+    handler: handler.alexa
+    events:
+      - alexaSkill: ${self:custom.alexa.skills.0.id}
