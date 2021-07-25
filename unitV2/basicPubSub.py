@@ -21,6 +21,7 @@ import time
 import argparse
 import json
 import cv2
+import base64
 
 
 AllowedActions = ['both', 'publish', 'subscribe']
@@ -128,6 +129,7 @@ while True:
                 message['message'] = args.message
                 message['sequence'] = loopCount
                 message['nekoyan'] = cat_count 
+                message['nekoyan_img'] = base64.encode(frame)
                 messageJson = json.dumps(message)
                 myAWSIoTMQTTClient.publish(topic, messageJson, 1)
                 print('Published topic %s: %s\n' % (topic, messageJson))
