@@ -115,6 +115,7 @@ time.sleep(2)
 # Camera setup
 cascade = cv2.CascadeClassifier('/root/cascade.xml')
 camera = cv2.VideoCapture(0)
+encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 25]
 
 # Publish to the same topic in a loop forever
 loopCount = 0
@@ -125,11 +126,18 @@ while True:
             cats = cascade.detectMultiScale(frame, 1.3, 3)
             cat_count = len(cats)
             if cat_count:
+                en_result, en_data = cv2.imencode('.jpg', frame, encode_param)
+                if not en_result:
+                    print('encode fail !!')
+                    continue
+                else:
+                    base64_en =  base64.b64encode(en_data).decode('utf-8')
+                    # print(base64_en)
                 message = {}
                 message['message'] = args.message
                 message['sequence'] = loopCount
                 message['nekoyan'] = cat_count 
-                message['nekoyan_img'] = base64.encode(frame)
+                message['nekoyan_img'] = base64_en
                 messageJson = json.dumps(message)
                 myAWSIoTMQTTClient.publish(topic, messageJson, 1)
                 print('Published topic %s: %s\n' % (topic, messageJson))
