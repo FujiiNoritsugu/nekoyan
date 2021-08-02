@@ -115,7 +115,7 @@ time.sleep(2)
 # Camera setup
 cascade = cv2.CascadeClassifier('/root/cascade.xml')
 camera = cv2.VideoCapture(0)
-encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 25]
+encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 50]
 
 # Publish to the same topic in a loop forever
 loopCount = 0
@@ -132,7 +132,6 @@ while True:
                     continue
                 else:
                     base64_en =  base64.b64encode(en_data).decode('utf-8')
-                    # print(base64_en)
                 message = {}
                 message['message'] = args.message
                 message['sequence'] = loopCount
